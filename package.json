@@ -8,7 +8,8 @@
     "start": "sanity start",
     "build": "sanity build",
     "dev": "sanity dev",
-    "deploy": "sanity deploy"
+    "deploy": "sanity deploy",
+    "pull-data": "rm -rf exports/production-export-* exports/production.ndjson && sanity datasets export production exports/production.ndjson --no-assets --overwrite && cd exports && tar xzf production.ndjson && mv production-export-* latest"
   },
   "dependencies": {
     "@sanity/assist": "^6.0.4",
