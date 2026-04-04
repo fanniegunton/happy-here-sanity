@@ -4,8 +4,6 @@ import { structureTool } from "sanity/structure";
 import { visionTool } from "@sanity/vision";
 import schemas from "./schemas/schema";
 import deskStructure from "./deskStructure";
-import { ExperienceEntryAction } from './plugins/experienceEntryAction'
-// import { Logo } from "./plugins/happy-here-logo/Logo ";
 
 export default defineConfig({
   title: "Happy Here",
@@ -20,16 +18,11 @@ export default defineConfig({
   schema: {
     types: schemas,
   },
-  // studio: {
-  //   components: {
-  //     logo: Logo,
-  //   },
-  // },
   document: {
     newDocumentOptions: (prev, { creationContext }) => {
       if (creationContext.type === "global") {
         return prev.filter(
-          (templateItem) => templateItem.templateId != "settings"
+          (templateItem) => templateItem.templateId != "settings",
         );
       }
       return prev;
@@ -38,13 +31,11 @@ export default defineConfig({
       // Remove certain actions from settings
       if (schemaType === "settings") {
         return prev.filter(
-          ({ action }) => !["unpublish", "delete", "duplicate"].includes(action)
+          ({ action }) =>
+            !["unpublish", "delete", "duplicate"].includes(action),
         );
       }
-      // Add Experience action to establishments
-      if (schemaType === "establishment") {
-        return [...prev, ExperienceEntryAction]
-      }
+
       return prev;
     },
   },
