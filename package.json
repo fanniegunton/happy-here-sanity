@@ -3,34 +3,24 @@
   "private": true,
   "version": "1.0.0",
   "description": "",
-  "main": "package.json",
   "author": "Fannie E Gunton <fanniegunton@gmail.com>",
-  "license": "UNLICENSED",
   "scripts": {
     "start": "sanity start",
     "build": "sanity build",
     "dev": "sanity dev",
-    "deploy": "yarn deploy:graphql && yarn deploy:studio",
-    "deploy:studio": "sanity deploy",
-    "deploy:graphql": "sanity graphql deploy --no-playground --force"
+    "deploy": "sanity deploy"
   },
-  "keywords": [
-    "sanity"
-  ],
   "dependencies": {
     "@sanity/assist": "^6.0.4",
-    "@sanity/eslint-config-studio": "^3.0.1",
+    "@sanity/eslint-config-studio": "^6.0.0",
     "@sanity/vision": "^5.18.0",
-    "eslint": "^8.6.0",
-    "prop-types": "^15.8.1",
+    "eslint": "^9.0.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
-    "react-scripts": "^5.0.1",
-    "react-time-picker": "^8.0.2",
     "sanity": "^5.18.0",
-    "sanity-pills": "^2.0.0",
-    "styled-components": "^6.1.15"
+    "sanity-pills": "^2.1.0",
+    "styled-components": "^6.1.15",
+    "typescript": "^5.9.3"
   },
-  "devDependencies": {},
-  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+  "packageManager": "pnpm@10.33.0+sha512.10568bb4a6afb58c9eb3630da90cc9516417abebd3fabbe6739f0ae795728da1491e9db5a544c76ad8eb7570f5c4bb3d6c637b2cb41bfdcdb47fa823c8649319"
 }
