@@ -7,14 +7,14 @@ Content studio for Happy Here, an Austin happy hour directory.
 - **Package manager:** pnpm
 - **Sanity project ID:** `9h94j7zr`
 - **Dataset:** `production`
-- **CLI:** Use `sanity` directly (not `npx sanity`)
+- **CLI:** Always use `pnpm exec sanity` — never the bare `sanity` command, which resolves to an old globally yarn-installed version and will fail.
 
 ## Scripts
 
-Scripts live in `scripts/` and are run via `sanity exec`:
+Scripts live in `scripts/` and are run via `pnpm exec sanity exec`:
 
 ```sh
-sanity exec scripts/<name>.ts --with-user-token
+pnpm exec sanity exec scripts/<name>.ts --with-user-token
 ```
 
 The `--with-user-token` flag is required for any script that reads or writes documents.
@@ -38,7 +38,7 @@ Applies bulk document changes as Sanity drafts so they can be reviewed and publi
 2. Run the script:
 
    ```sh
-   sanity exec scripts/applyChanges.ts --with-user-token
+   pnpm exec sanity exec scripts/applyChanges.ts --with-user-token
    ```
 
 3. The script fetches the current published version of each document, merges in the changes, and writes a `drafts.*` version. Successfully applied files are moved to `pendingChanges/applied/`.
@@ -56,7 +56,7 @@ Applies bulk document changes as Sanity drafts so they can be reviewed and publi
 Export the production dataset for local processing:
 
 ```sh
-sanity datasets export production exports/production.ndjson --no-assets
+pnpm exec sanity datasets export production exports/production.ndjson --no-assets
 ```
 
 The `--no-assets` flag skips downloading images/files, which speeds things up when you only need documents. The output file is a gzipped tarball despite the `.ndjson` name.
