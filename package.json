@@ -5,7 +5,7 @@
   "description": "",
   "author": "Fannie E Gunton <fanniegunton@gmail.com>",
   "scripts": {
-    "start": "sanity start",
+    "start": "sanity preview",
     "build": "sanity build",
     "dev": "sanity dev",
     "deploy": "sanity deploy",
