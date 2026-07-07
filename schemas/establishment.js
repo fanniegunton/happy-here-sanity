@@ -35,16 +35,16 @@ export default {
       },
     },
     {
-      title: "Ownership Details",
-      name: "ownershipDetails",
+      title: "Experience",
+      name: "experience",
       options: {
         collapsible: true,
         collapsed: true,
       },
     },
     {
-      title: "Experience",
-      name: "experience",
+      title: "Ownership Details",
+      name: "ownershipDetails",
       options: {
         collapsible: true,
         collapsed: true,
@@ -128,7 +128,6 @@ export default {
       title: "Happy Hour Details",
       name: "happyHourDetails",
       type: "text",
-      validation: (Rule) => Rule.required(),
       fieldset: "happyHour",
       rows: 3,
     },
@@ -178,50 +177,6 @@ export default {
       },
     },
     {
-      title: "Ownership Identified As:",
-      name: "ownershipIdentifiedAs",
-      description: "Leave blank if unknown.",
-      fieldset: "ownershipDetails",
-      type: "array",
-      of: [{ type: "string" }],
-      options: {
-        list: [
-          { title: "Black-Owned", value: "blackOwned" },
-          { title: "Latino-Owned", value: "latinoOwned" },
-          { title: "LGBTQA+ Owned", value: "lgbtqaplusOwned" },
-          { title: "Women-Owned", value: "womenOwned" },
-          { title: "Native-Owned", value: "nativeOwned" },
-          { title: "AAPI-Owned", value: "aapiOwned" },
-          { title: "BIPOC-Owned", value: "bipocOwned" },
-        ],
-      },
-    },
-    {
-      title: "Key People",
-      name: "keyPeople",
-      description:
-        "Who are the key people at this establishment? Owners, chefs, food or bev program managers matter. Investors are potentially interesting. Leave blank if unknown.",
-      fieldset: "ownershipDetails",
-      type: "array",
-      of: [{ type: "string" }],
-    },
-    {
-      title: "Local or not?",
-      name: "localOrNot",
-      description:
-        "Is this establishment actually local to Austin or is it part of a larger chain? Leave blank if unknown.",
-      fieldset: "ownershipDetails",
-      type: "boolean",
-    },
-    {
-      title: "Ownership Group",
-      name: "ownershipGroup",
-      description:
-        "Is this establishment part of a larger group? Leave blank if unknown.",
-      fieldset: "ownershipDetails",
-      type: "string",
-    },
-    {
       title: "Quick Description",
       name: "quickDescription",
       description:
@@ -253,7 +208,6 @@ export default {
       },
       fieldset: "experience",
     },
-    // MIGRATION: DEPRECATED — data manually migrating to seatingTypes, seatingDetails. Do not populate. Safe to delete once establishment records are confirmed migrated.
     {
       title: "Seating",
       name: "seating",
@@ -262,7 +216,6 @@ export default {
       fieldset: "experience",
       type: "text",
       rows: 3,
-      readOnly: true,
     },
     {
       name: "seatingTypes",
@@ -304,7 +257,6 @@ export default {
       },
       fieldset: "experience",
     },
-    // MIGRATION: DEPRECATED — data manually migrating to lightingTypes, lightingDetails. Do not populate. Safe to delete once establishment records are confirmed migrated.
     {
       title: "Lighting",
       name: "lighting",
@@ -313,7 +265,6 @@ export default {
       fieldset: "experience",
       type: "text",
       rows: 3,
-      readOnly: true,
     },
     {
       name: "lightingTypes",
@@ -365,20 +316,38 @@ export default {
     {
       name: "goodForConversation",
       title: "Good for Conversation",
-      type: "number",
-      description:
-        "1 = too loud/busy to talk, 5 = quiet and intimate, easy conversation",
-      validation: (Rule) => Rule.min(1).max(5).integer(),
+      type: "string",
+      options: {
+        list: [
+          { title: "1 — Too loud / hard to hear", value: "gfc_1" },
+          { title: "2 — Noisy but manageable", value: "gfc_2" },
+          { title: "3 — Moderate, some effort needed", value: "gfc_3" },
+          { title: "4 — Pretty easy to talk", value: "gfc_4" },
+          { title: "5 — Quiet and intimate", value: "gfc_5" },
+        ],
+      },
       fieldset: "experience",
     },
     {
-      title: "Staff Niceness",
-      name: "staffNiceness",
+      title: "Staff Warmth",
+      name: "staffWarmth",
       description:
         "Are the staff nice? Are they attentive? Do they give good suggestions when asked?",
       fieldset: "experience",
-      type: "text",
-      rows: 3,
+      type: "string",
+      options: {
+        list: [
+          { title: "1 — Bordering on rude", value: "1" },
+          { title: "2 — Bare minimum", value: "2" },
+          {
+            title:
+              "3 — Good at answering questions, but keeps it strictly on business",
+            value: "3",
+          },
+          { title: "4 — They remember you, but they don't chat", value: "4" },
+          { title: "5 — The CHEERS experience", value: "5" },
+        ],
+      },
     },
     {
       title: "Music",
@@ -389,7 +358,6 @@ export default {
       type: "text",
       rows: 3,
     },
-    // MIGRATION: DEPRECATED — data manually migrating to bathroomDetails. Do not populate. Safe to delete once establishment records are confirmed migrated.
     {
       title: "Bathrooms",
       name: "bathrooms",
@@ -398,7 +366,6 @@ export default {
       fieldset: "experience",
       type: "text",
       rows: 3,
-      readOnly: true,
     },
     {
       name: "bathroomDetails",
@@ -437,16 +404,21 @@ export default {
       type: "text",
       rows: 3,
     },
-    // MIGRATION: DEPRECATED — data manually migrating to accessibilityIssues, accessibilityAccommodations. Do not populate. Safe to delete once establishment records are confirmed migrated.
     {
-      title: "Accessibility",
-      name: "accessibility",
-      description:
-        "Is it accessible? What's the seating like? Are there stairs?",
+      title: "Designed By",
+      name: "designedBy",
+      description: "Who's the interior designer?",
       fieldset: "experience",
       type: "text",
       rows: 3,
-      readOnly: true,
+    },
+    {
+      title: "Accessibility",
+      name: "accessibility",
+      description: "Write out details",
+      fieldset: "experience",
+      type: "text",
+      rows: 3,
     },
     {
       name: "accessibilityIssues",
@@ -464,8 +436,7 @@ export default {
             value: "no_ada_counter",
           },
           {
-            title:
-              "Accessible bathroom stall too narrow / none available",
+            title: "Accessible bathroom stall too narrow / none available",
             value: "narrow_or_no_ada_bathroom",
           },
           {
@@ -522,7 +493,6 @@ export default {
       },
       fieldset: "experience",
     },
-    // MIGRATION: DEPRECATED — data manually migrating to allergensFree, allergensModifiable. Do not populate. Safe to delete once establishment records are confirmed migrated.
     {
       title: "Allergy Friendly",
       name: "allergyFriendly",
@@ -531,7 +501,6 @@ export default {
       fieldset: "experience",
       type: "text",
       rows: 3,
-      readOnly: true,
     },
     {
       name: "allergensFree",
@@ -566,6 +535,50 @@ export default {
       fieldset: "experience",
       type: "text",
       rows: 3,
+    },
+    {
+      title: "Ownership Identified As:",
+      name: "ownershipIdentifiedAs",
+      description: "Leave blank if unknown.",
+      fieldset: "ownershipDetails",
+      type: "array",
+      of: [{ type: "string" }],
+      options: {
+        list: [
+          { title: "Black-Owned", value: "blackOwned" },
+          { title: "Latino-Owned", value: "latinoOwned" },
+          { title: "LGBTQA+ Owned", value: "lgbtqaplusOwned" },
+          { title: "Women-Owned", value: "womenOwned" },
+          { title: "Native-Owned", value: "nativeOwned" },
+          { title: "AAPI-Owned", value: "aapiOwned" },
+          { title: "BIPOC-Owned", value: "bipocOwned" },
+        ],
+      },
+    },
+    {
+      title: "Key People",
+      name: "keyPeople",
+      description:
+        "Who are the key people at this establishment? Owners, chefs, food or bev program managers matter. Investors are potentially interesting. Leave blank if unknown.",
+      fieldset: "ownershipDetails",
+      type: "array",
+      of: [{ type: "string" }],
+    },
+    {
+      title: "Local or not?",
+      name: "localOrNot",
+      description:
+        "Is this establishment actually local to Austin or is it part of a larger chain? Leave blank if unknown.",
+      fieldset: "ownershipDetails",
+      type: "boolean",
+    },
+    {
+      title: "Ownership Group",
+      name: "ownershipGroup",
+      description:
+        "Is this establishment part of a larger group? Leave blank if unknown.",
+      fieldset: "ownershipDetails",
+      type: "string",
     },
   ],
 };
