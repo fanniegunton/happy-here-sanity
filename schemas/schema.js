@@ -11,6 +11,7 @@ import post from "./post";
 import establishment from "./establishment";
 import settings from "./settings";
 import dayAndTime from "./objects/dayAndTime";
+import neighborhood from "./objects/neighborhood";
 import placeholderImages from "./placeholderImages";
 
 // Then we give our schema to the builder and provide the result to Sanity
@@ -26,4 +27,5 @@ export default [
   // { type: 'typename' } in other document schemas
   blockContent,
   dayAndTime,
+  neighborhood,
 ];

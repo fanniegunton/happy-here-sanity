@@ -82,7 +82,7 @@ export default {
     {
       title: "Neighborhood",
       name: "neighborhood",
-      type: "string",
+      type: "neighborhood",
       validation: (Rule) => Rule.required(),
       fieldset: "information",
     },

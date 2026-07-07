@@ -51,6 +51,22 @@ Applies bulk document changes as Sanity drafts so they can be reviewed and publi
 - If a published document doesn't exist for a given `_id`, the change is skipped.
 - Files are named descriptively (e.g. `easy-tiger.json`) for easy identification.
 
+### `scripts/publishEstablishments.ts`
+
+Publishes all pending `establishment` drafts at once.
+
+```sh
+pnpm exec sanity exec scripts/publishEstablishments.ts --with-user-token
+```
+
+Before running, check what's actually in draft — this publishes *every* establishment draft indiscriminately, including any in-progress manual edits made directly in Studio, not just ones from a bulk-change workflow. Query for drafts first if you're not sure what's pending:
+
+```sh
+pnpm exec sanity documents query '*[_id in path("drafts.**") && _type == "establishment"]{_id, name}' --api-version 2021-06-07
+```
+
+(Use an older `--api-version` like above — the default API version's query perspective excludes drafts.)
+
 ## Data exports
 
 Export the production dataset for local processing:
