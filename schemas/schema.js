@@ -9,6 +9,8 @@ import blockContent from "./blockContent";
 import category from "./category";
 import post from "./post";
 import establishment from "./establishment";
+import venueSubmission from "./venueSubmission";
+import blockedSender from "./blockedSender";
 import settings from "./settings";
 import dayAndTime from "./objects/dayAndTime";
 import neighborhood from "./objects/neighborhood";
@@ -21,6 +23,8 @@ export default [
   post,
   category,
   establishment,
+  venueSubmission,
+  blockedSender,
   settings,
   placeholderImages,
   // When added to this list, object types can be used as

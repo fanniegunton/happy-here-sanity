@@ -11,6 +11,15 @@ export default (S) =>
             .schemaType("settings")
             .documentId("settings")
         ),
+      S.listItem()
+        .title("Archived Submissions")
+        .child(
+          S.documentTypeList("venueSubmission")
+            .title("Archived Submissions")
+            .filter(
+              '_type == "venueSubmission" && !(_id in path("drafts.**"))'
+            )
+        ),
       ...S.documentTypeListItems().filter(
         (listItem) => !["settings"].includes(listItem.getId())
       ),
