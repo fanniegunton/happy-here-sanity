@@ -15,17 +15,19 @@
 import { Stagehand } from "@browserbasehq/stagehand";
 import { z } from "zod";
 
+// Structured-output models require every property in `required`, so unknown
+// values are expressed as null rather than omitted (.nullable, not .optional)
 const VerificationSchema = z.object({
   isOperational: z.boolean(),
   permanentlyClosed: z.boolean(),
   temporarilyClosed: z.boolean(),
   websiteAlive: z.boolean(),
-  happyHourStillExists: z.boolean().optional(),
-  happyHourTimes: z.array(z.string()).optional(),
-  happyHourSummary: z.string().optional(),
-  hoursChanged: z.boolean().optional(),
-  currentHours: z.array(z.string()).optional(),
-  notes: z.string().optional(),
+  happyHourStillExists: z.boolean().nullable(),
+  happyHourTimes: z.array(z.string()).nullable(),
+  happyHourSummary: z.string().nullable(),
+  hoursChanged: z.boolean().nullable(),
+  currentHours: z.array(z.string()).nullable(),
+  notes: z.string().nullable(),
 });
 
 export const handler = async (event) => {
@@ -61,7 +63,13 @@ export const handler = async (event) => {
     const page =
       stagehand.context.pages()[0] ?? (await stagehand.context.newPage());
 
-    await page.goto(website, { waitUntil: "networkidle", timeoutMs: 20000 });
+    try {
+      await page.goto(website, { waitUntil: "load", timeoutMs: 20000 });
+    } catch (gotoErr) {
+      // Slow sites often render fine without ever firing `load` —
+      // attempt extraction anyway; only bail on non-timeout failures
+      if (!/timed out/i.test(gotoErr.message || "")) throw gotoErr;
+    }
 
     const result = await stagehand.extract(
       `Check this establishment's website for the following:

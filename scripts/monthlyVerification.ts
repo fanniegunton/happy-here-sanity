@@ -47,17 +47,19 @@ const EXPERIENCE_FIELDS = [
   "allergyFriendly", "notes",
 ]
 
+// Structured-output models require every property in `required`, so unknown
+// values are expressed as null rather than omitted (.nullable, not .optional)
 const VerificationSchema = z.object({
   isOperational: z.boolean(),
   permanentlyClosed: z.boolean(),
   temporarilyClosed: z.boolean(),
   websiteAlive: z.boolean(),
-  happyHourStillExists: z.boolean().optional(),
-  happyHourTimes: z.array(z.string()).optional(),
-  happyHourSummary: z.string().optional(),
-  hoursChanged: z.boolean().optional(),
-  currentHours: z.array(z.string()).optional(),
-  notes: z.string().optional(),
+  happyHourStillExists: z.boolean().nullable(),
+  happyHourTimes: z.array(z.string()).nullable(),
+  happyHourSummary: z.string().nullable(),
+  hoursChanged: z.boolean().nullable(),
+  currentHours: z.array(z.string()).nullable(),
+  notes: z.string().nullable(),
 })
 
 type Verification = z.infer<typeof VerificationSchema>
@@ -103,7 +105,13 @@ async function verifyOne(website: string): Promise<Verification> {
   try {
     const page =
       stagehand.context.pages()[0] ?? (await stagehand.context.newPage())
-    await page.goto(website, { waitUntil: "networkidle", timeoutMs: 20000 })
+    try {
+      await page.goto(website, { waitUntil: "load", timeoutMs: 20000 })
+    } catch (err: any) {
+      // Slow sites often render fine without ever firing `load` —
+      // attempt extraction anyway; only bail on non-timeout failures
+      if (!/timed out/i.test(err.message || "")) throw err
+    }
     return await stagehand.extract(EXTRACT_INSTRUCTION, VerificationSchema)
   } finally {
     await stagehand.close().catch(() => {})
