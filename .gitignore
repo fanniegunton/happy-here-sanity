@@ -14,7 +14,11 @@ node_modules
 # Temp Sanity files
 /.sanity
 
+# Local env vars
+.env.local
+
 *.tsbuildinfo
 /exports/
+/output/
 /pendingChanges/*
 !/pendingChanges/.gitkeep

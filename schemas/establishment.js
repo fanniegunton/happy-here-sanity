@@ -59,6 +59,13 @@ export default {
       initialValue: false,
     },
     {
+      title: "Needs Review",
+      name: "needsReview",
+      type: "boolean",
+      initialValue: false,
+      description: "Flagged for manual review — set automatically by verification runs.",
+    },
+    {
       title: "Name",
       name: "name",
       type: "string",

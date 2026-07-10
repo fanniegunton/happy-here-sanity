@@ -6,6 +6,10 @@ import schemas from "./schemas/schema";
 import deskStructure from "./deskStructure";
 import { submissionInboxTool } from "./tools/submissionInbox";
 import { DEFAULT_IMPLEMENTATION_NOTE } from "./schemas/venueSubmission";
+import { RunVerificationAction } from "./plugins/documentActions/runVerification";
+import { FlagForReviewAction } from "./plugins/documentActions/flagForReview";
+import { MarkVerifiedAction } from "./plugins/documentActions/markVerified";
+import { happyHereDashboard } from "./plugins/happyHereDashboard";
 
 // Publishing a venueSubmission is really "archiving" it: the submission
 // leaves the inbox (which lists drafts only) and becomes a permanent record.
@@ -49,6 +53,7 @@ export default defineConfig({
       structure: deskStructure,
     }),
     visionTool(),
+    happyHereDashboard(),
   ],
   tools: (prev) => [...prev, submissionInboxTool],
   schema: {
@@ -79,6 +84,15 @@ export default defineConfig({
             ? createArchiveAction(originalAction)
             : originalAction,
         );
+      }
+
+      if (schemaType === "establishment") {
+        return [
+          ...prev,
+          RunVerificationAction,
+          FlagForReviewAction,
+          MarkVerifiedAction,
+        ];
       }
 
       return prev;
