@@ -23,11 +23,11 @@ import { CheckmarkCircleIcon, WarningOutlineIcon, ClockIcon, LaunchIcon } from "
 
 const MONTHLY_CHECK_ENDPOINT =
   process.env.SANITY_STUDIO_MONTHLY_CHECK_ENDPOINT ||
-  "/.netlify/functions/run-monthly-check";
+  "https://happyhere.netlify.app/.netlify/functions/run-monthly-check";
 
 const PLACES_PREFLIGHT_ENDPOINT =
   process.env.SANITY_STUDIO_PLACES_PREFLIGHT_ENDPOINT ||
-  "/.netlify/functions/places-preflight";
+  "https://happyhere.netlify.app/.netlify/functions/places-preflight";
 
 // localStorage key for tracking last run date
 const LAST_RUN_KEY = "happyhere_monthly_check_last_run";

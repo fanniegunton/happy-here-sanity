@@ -17,7 +17,7 @@ import { useDocumentOperation, useEditState } from "sanity";
 import { useState, useCallback } from "react";
 
 const VERIFY_ENDPOINT = process.env.SANITY_STUDIO_VERIFY_ENDPOINT ||
-  "/.netlify/functions/verify-establishment";
+  "https://happyhere.netlify.app/.netlify/functions/verify-establishment";
 
 // Experience fields — never patched by automation
 const EXPERIENCE_FIELDS = [
