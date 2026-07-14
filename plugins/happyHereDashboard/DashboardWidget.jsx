@@ -16,6 +16,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useClient } from "sanity";
 import { Card, Stack, Text, Button, Badge, Spinner, Box, Flex, Heading } from "@sanity/ui";
 import { CheckmarkCircleIcon, WarningOutlineIcon, ClockIcon, LaunchIcon } from "@sanity/icons";
+import { REGIONS, allSubNeighborhoods } from "../../schemas/objects/neighborhood";
 
 // ---------------------------------------------------------------------------
 // CONFIG
@@ -241,6 +242,19 @@ const FLAGGED_QUERY = `
   }
 `;
 
+// `neighborhood` is an object ({ region, subNeighborhood* }) — resolve it to
+// the human-readable titles defined in the schema before rendering
+function formatNeighborhood(neighborhood) {
+  if (!neighborhood) return null;
+  const regionLabel = REGIONS.find((r) => r.value === neighborhood.region)?.title;
+  const subValue = Object.entries(neighborhood).find(
+    ([key, value]) => key.startsWith("subNeighborhood") && value
+  )?.[1];
+  const subLabel = allSubNeighborhoods.find((s) => s.value === subValue)?.title;
+  if (regionLabel && subLabel) return `${regionLabel} — ${subLabel}`;
+  return regionLabel || subLabel || null;
+}
+
 function FlaggedList() {
   const client = useClient({ apiVersion: "2024-01-01" });
   const [records, setRecords] = useState([]);
@@ -322,9 +336,9 @@ function FlaggedList() {
                         </Badge>
                       )}
                     </Flex>
-                    {record.neighborhood && (
+                    {formatNeighborhood(record.neighborhood) && (
                       <Text size={1} muted>
-                        {record.neighborhood}
+                        {formatNeighborhood(record.neighborhood)}
                       </Text>
                     )}
                     {record.notes?.includes("[AUTO-FLAG") && (

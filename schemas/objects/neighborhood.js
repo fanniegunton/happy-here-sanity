@@ -1,6 +1,6 @@
 import { NeighborhoodInput } from '../../components/NeighborhoodInput'
 
-const REGIONS = [
+export const REGIONS = [
   { title: "Central", value: "central" },
   { title: "Downtown", value: "downtown" },
   { title: "East", value: "east" },
@@ -13,7 +13,7 @@ const REGIONS = [
   { title: "West", value: "west" },
 ];
 
-const SUB_NEIGHBORHOODS = {
+export const SUB_NEIGHBORHOODS = {
   downtown: [
     { title: "Downtown", value: "downtown" },
     { title: "Rainey Street", value: "raineyStreet" },
@@ -106,7 +106,7 @@ const SUB_NEIGHBORHOODS = {
   ],
 };
 
-const allSubNeighborhoods = Object.values(SUB_NEIGHBORHOODS).flat();
+export const allSubNeighborhoods = Object.values(SUB_NEIGHBORHOODS).flat();
 
 export default {
   name: "neighborhood",
