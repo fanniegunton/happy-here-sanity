@@ -27,7 +27,7 @@ export default {
       },
     },
     {
-      title: "Happy Hour",
+      title: "Happy Hour + Deals",
       name: "happyHour",
       options: {
         collapsible: true,
@@ -63,7 +63,8 @@ export default {
       name: "needsReview",
       type: "boolean",
       initialValue: false,
-      description: "Flagged for manual review — set automatically by verification runs.",
+      description:
+        "Flagged for manual review — set automatically by verification runs.",
     },
     {
       title: "Name",
@@ -137,6 +138,69 @@ export default {
       type: "text",
       fieldset: "happyHour",
       rows: 3,
+    },
+    {
+      title: "Other Deals",
+      name: "otherDeals",
+      type: "array",
+      fieldset: "happyHour",
+      of: [
+        {
+          type: "object",
+          fields: [
+            {
+              title: "Deal Type",
+              name: "dealType",
+              type: "string",
+              validation: (Rule) => Rule.required(),
+              options: {
+                layout: "dropdown",
+                list: [
+                  { title: "Daily Special", value: "daily-special" },
+                  { title: "Industry Night", value: "industry-night" },
+                  { title: "Late Night", value: "late-night" },
+                  { title: "Brunch", value: "brunch" },
+                  { title: "Reverse Happy Hour", value: "reverse-hh" },
+                ],
+              },
+            },
+            {
+              title: "Times",
+              name: "times",
+              type: "array",
+              of: [{ type: "string" }],
+              description:
+                'Day range, colon, space, time range — same format as Happy Hour Times (e.g. "Mon-Fri: 4PM-6PM").',
+              validation: (Rule) => Rule.required().min(1),
+            },
+            {
+              title: "Details",
+              name: "details",
+              type: "text",
+              validation: (Rule) => Rule.required(),
+            },
+          ],
+          preview: {
+            select: {
+              dealType: "dealType",
+              times: "times",
+            },
+            prepare({ dealType, times }) {
+              const DEAL_TYPE_LABELS = {
+                "daily-special": "Daily Special",
+                "industry-night": "Industry Night",
+                "late-night": "Late Night",
+                brunch: "Brunch",
+                "reverse-hh": "Reverse Happy Hour",
+              };
+              return {
+                title: DEAL_TYPE_LABELS[dealType] || "Untitled Deal",
+                subtitle: (times || []).join(", "),
+              };
+            },
+          },
+        },
+      ],
     },
     {
       title: "What We Have Here",
