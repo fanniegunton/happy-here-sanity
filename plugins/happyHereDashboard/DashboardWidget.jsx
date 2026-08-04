@@ -7,7 +7,8 @@
  *      - Goes green after you click it; stays green until next 1st
  *   2. Google Places pre-flight: batch-checks all records with no website
  *      for "permanently closed" status before Browserbase sessions fire
- *   3. Flagged/closed establishments list with links to their Studio records
+ *   3. Deploy Site: triggers a Netlify rebuild so published edits go live
+ *   4. Flagged/closed establishments list with links to their Studio records
  *
  * Drop this file into your Sanity Studio and register via the plugin index.
  */
@@ -30,6 +31,14 @@ const PLACES_PREFLIGHT_ENDPOINT =
   process.env.SANITY_STUDIO_PLACES_PREFLIGHT_ENDPOINT ||
   "https://happyhere.netlify.app/.netlify/functions/places-preflight";
 
+// Netlify build hook for the public site. Anyone holding this ID can trigger a
+// build, so it stays out of the repo — set it in .env.local and in whatever
+// environment builds the Studio (SANITY_STUDIO_* vars are inlined at build
+// time, so a missing value here means the button renders but can't fire).
+const NETLIFY_BUILD_HOOK_ID = process.env.SANITY_STUDIO_NETLIFY_BUILD_HOOK_ID;
+const NETLIFY_SITE_URL = "https://hh.takeouttracker.com";
+const NETLIFY_ADMIN_URL = "https://app.netlify.com/projects/happyhere/deploys";
+
 // localStorage key for tracking last run date
 const LAST_RUN_KEY = "happyhere_monthly_check_last_run";
 
@@ -50,6 +59,47 @@ function setLastRunDate(date) {
   try {
     localStorage.setItem(LAST_RUN_KEY, date.toISOString());
   } catch {}
+}
+
+/**
+ * POSTs to a Netlify function and returns its parsed JSON body.
+ *
+ * Netlify doesn't always answer with JSON: a function that exceeds the 10s
+ * limit comes back as a plain-text timeout notice, and gateway failures come
+ * back as HTML. Calling res.json() on those throws "Failed to execute 'json'
+ * on 'Response'", which tells you nothing about what actually went wrong — so
+ * read the body as text first and surface a message naming the real cause.
+ */
+async function postJson(endpoint, body) {
+  const res = await fetch(endpoint, {
+    method: "POST",
+    ...(body && {
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    }),
+  });
+
+  const text = await res.text();
+
+  if (!res.ok) {
+    const detail = text.trim().slice(0, 200);
+    throw new Error(
+      detail
+        ? `Endpoint returned ${res.status}: ${detail}`
+        : `Endpoint returned ${res.status}`
+    );
+  }
+
+  try {
+    return JSON.parse(text);
+  } catch {
+    const detail = text.trim().slice(0, 200);
+    throw new Error(
+      detail
+        ? `Expected JSON, got: ${detail}`
+        : "Endpoint returned an empty response"
+    );
+  }
 }
 
 /**
@@ -82,9 +132,7 @@ function MonthlyCheckButton() {
     setPreflightRunning(true);
     setPreflightResult(null);
     try {
-      const res = await fetch(PLACES_PREFLIGHT_ENDPOINT, { method: "POST" });
-      const data = await res.json();
-      setPreflightResult(data);
+      setPreflightResult(await postJson(PLACES_PREFLIGHT_ENDPOINT));
     } catch (err) {
       setPreflightResult({ error: err.message });
     } finally {
@@ -97,16 +145,7 @@ function MonthlyCheckButton() {
     setRunResult(null);
 
     try {
-      const response = await fetch(MONTHLY_CHECK_ENDPOINT, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ mode: "verify" }),
-      });
-
-      if (!response.ok) throw new Error(`Endpoint returned ${response.status}`);
-
-      const data = await response.json();
-      setRunResult(data);
+      setRunResult(await postJson(MONTHLY_CHECK_ENDPOINT, { mode: "verify" }));
 
       const now = new Date();
       setLastRunDate(now);
@@ -122,8 +161,8 @@ function MonthlyCheckButton() {
   const StatusIcon = needsRun ? WarningOutlineIcon : CheckmarkCircleIcon;
 
   return (
-    <Card padding={4} radius={2} shadow={1}>
-      <Stack space={4}>
+    <Card padding={3} radius={2} shadow={1}>
+      <Stack space={3}>
         <Flex align="center" gap={3}>
           <Heading size={1}>Monthly Check</Heading>
           <Badge
@@ -160,9 +199,8 @@ function MonthlyCheckButton() {
             Step 1 — Places pre-flight
           </Text>
           <Text size={1} muted>
-            Batch-checks records with no website via Google Places API.
-            Flags permanently closed ones before Browserbase sessions run,
-            saving browser hours.
+            Flags closed records with no website via Google Places, before
+            Browserbase runs.
           </Text>
           <Button
             text={preflightRunning ? "Checking Places…" : "Run Places Pre-flight"}
@@ -173,16 +211,26 @@ function MonthlyCheckButton() {
             onClick={handlePreflight}
           />
           {preflightResult && !preflightResult.error && (
-            <Card padding={3} tone="positive" radius={2}>
-              <Text size={1}>
-                ✓ {preflightResult.checked} checked —{" "}
-                {preflightResult.flaggedClosed} flagged closed,{" "}
-                {preflightResult.skippedHasWebsite} skipped (have website).
-              </Text>
+            <Card padding={2} tone="positive" radius={2}>
+              <Stack space={2}>
+                <Text size={1}>
+                  ✓ {preflightResult.checked} checked —{" "}
+                  {preflightResult.flaggedClosed} flagged closed,{" "}
+                  {preflightResult.skippedHasWebsite} skipped (have website).
+                </Text>
+                {preflightResult.errors?.length > 0 && (
+                  <Text size={1} muted>
+                    {preflightResult.errors.length} couldn't be looked up:{" "}
+                    {preflightResult.errors
+                      .map((e) => `${e.name} (${e.reason})`)
+                      .join(", ")}
+                  </Text>
+                )}
+              </Stack>
             </Card>
           )}
           {preflightResult?.error && (
-            <Card padding={3} tone="critical" radius={2}>
+            <Card padding={2} tone="critical" radius={2}>
               <Text size={1}>Pre-flight error: {preflightResult.error}</Text>
             </Card>
           )}
@@ -194,8 +242,8 @@ function MonthlyCheckButton() {
             Step 2 — Full verification pass
           </Text>
           <Text size={1} muted>
-            Runs Stagehand/Browserbase on all records with websites. Updates HH
-            times and hours; flags anything that looks off.
+            Runs Browserbase on records with websites. Updates HH times and
+            hours; flags anything off.
           </Text>
           <Button
             text={isRunning ? "Running…" : "Run Monthly Check"}
@@ -206,7 +254,7 @@ function MonthlyCheckButton() {
         </Stack>
 
         {runResult && !runResult.error && (
-          <Card padding={3} tone="positive" radius={2}>
+          <Card padding={2} tone="positive" radius={2}>
             <Text size={1}>
               ✓ Complete — {runResult.ok ?? "?"} OK,{" "}
               {runResult.needsReview ?? "?"} need review,{" "}
@@ -216,10 +264,110 @@ function MonthlyCheckButton() {
           </Card>
         )}
         {runResult?.error && (
-          <Card padding={3} tone="critical" radius={2}>
+          <Card padding={2} tone="critical" radius={2}>
             <Text size={1}>Error: {runResult.error}</Text>
           </Card>
         )}
+      </Stack>
+    </Card>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// DEPLOY SITE BUTTON
+// ---------------------------------------------------------------------------
+
+/**
+ * Triggers a Netlify rebuild of the public site via build hook, so published
+ * data edits go live immediately instead of waiting for a scheduled build.
+ *
+ * The hook returns 200 with an empty body and no deploy ID, so we can only
+ * report that the build was *queued* — not that it succeeded. The Netlify
+ * link is there for actually watching it land.
+ */
+function DeployButton() {
+  const [isDeploying, setIsDeploying] = useState(false);
+  const [result, setResult] = useState(null);
+
+  const handleDeploy = useCallback(async () => {
+    setIsDeploying(true);
+    setResult(null);
+    try {
+      // Build hooks allow cross-origin POST (access-control-allow-origin: *),
+      // so a plain fetch works and the status is readable.
+      const res = await fetch(
+        `https://api.netlify.com/build_hooks/${NETLIFY_BUILD_HOOK_ID}`,
+        { method: "POST" },
+      );
+      if (!res.ok) throw new Error(`Netlify returned ${res.status}`);
+      setResult({ queuedAt: new Date() });
+    } catch (err) {
+      setResult({ error: err.message });
+    } finally {
+      setIsDeploying(false);
+    }
+  }, []);
+
+  return (
+    <Card padding={3} radius={2} shadow={1}>
+      <Stack space={3}>
+        <Heading size={1}>Deploy Site</Heading>
+
+        <Text size={1} muted>
+          Rebuilds the public site so published changes go live now.
+        </Text>
+
+        {NETLIFY_BUILD_HOOK_ID ? (
+          <Button
+            text={isDeploying ? "Triggering…" : "Deploy Site"}
+            tone="primary"
+            icon={isDeploying ? Spinner : undefined}
+            disabled={isDeploying}
+            onClick={handleDeploy}
+          />
+        ) : (
+          <Card padding={2} tone="caution" radius={2}>
+            <Text size={1}>
+              SANITY_STUDIO_NETLIFY_BUILD_HOOK_ID is not set — add it to
+              .env.local and restart the Studio.
+            </Text>
+          </Card>
+        )}
+
+        {result?.queuedAt && (
+          <Card padding={2} tone="positive" radius={2}>
+            <Text size={1}>
+              ✓ Build queued at{" "}
+              {result.queuedAt.toLocaleTimeString("en-US", {
+                hour: "numeric",
+                minute: "2-digit",
+              })}
+              . Usually live in a few minutes.
+            </Text>
+          </Card>
+        )}
+        {result?.error && (
+          <Card padding={2} tone="critical" radius={2}>
+            <Text size={1}>Deploy error: {result.error}</Text>
+          </Card>
+        )}
+
+        <Flex gap={3}>
+          <Text size={1}>
+            <a
+              href={NETLIFY_ADMIN_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Deploy log <LaunchIcon style={{ verticalAlign: "middle" }} />
+            </a>
+          </Text>
+          <Text size={1}>
+            <a href={NETLIFY_SITE_URL} target="_blank" rel="noopener noreferrer">
+              View site <LaunchIcon style={{ verticalAlign: "middle" }} />
+            </a>
+          </Text>
+        </Flex>
       </Stack>
     </Card>
   );
@@ -306,7 +454,7 @@ function FlaggedList() {
         </Flex>
 
         {records.length === 0 ? (
-          <Card padding={3} tone="positive" radius={2}>
+          <Card padding={2} tone="positive" radius={2}>
             <Text size={1}>All clear — nothing flagged right now.</Text>
           </Card>
         ) : (
@@ -377,8 +525,17 @@ function FlaggedList() {
 export function HappyHereDashboardWidget() {
   return (
     <Box padding={4}>
-      <Stack space={5}>
-        <MonthlyCheckButton />
+      <Stack space={4}>
+        {/* Side by side on wide screens; wraps to stacked when the Studio
+            pane gets narrow, since each card needs ~320px to stay readable. */}
+        <Flex gap={4} wrap="wrap" align="flex-start">
+          <Box flex={1} style={{ minWidth: 320 }}>
+            <MonthlyCheckButton />
+          </Box>
+          <Box flex={1} style={{ minWidth: 320 }}>
+            <DeployButton />
+          </Box>
+        </Flex>
         <FlaggedList />
       </Stack>
     </Box>

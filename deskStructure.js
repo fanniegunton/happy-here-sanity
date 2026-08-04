@@ -11,6 +11,13 @@ export default (S) =>
             .schemaType("settings")
             .documentId("settings")
         ),
+      ...S.documentTypeListItems().filter(
+        (listItem) =>
+          !["settings", "venueSubmission", "blockedSender"].includes(
+            listItem.getId()
+          )
+      ),
+      S.divider(),
       S.listItem()
         .title("Archived Submissions")
         .child(
@@ -20,7 +27,14 @@ export default (S) =>
               '_type == "venueSubmission" && !(_id in path("drafts.**"))'
             )
         ),
-      ...S.documentTypeListItems().filter(
-        (listItem) => !["settings"].includes(listItem.getId())
-      ),
+      S.listItem()
+        .title("Venue Submissions")
+        .child(
+          S.documentTypeList("venueSubmission").title("Venue Submissions")
+        ),
+      S.listItem()
+        .title("Blocked Sender")
+        .child(
+          S.documentTypeList("blockedSender").title("Blocked Sender")
+        ),
     ]);
