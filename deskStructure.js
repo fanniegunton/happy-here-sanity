@@ -13,10 +13,28 @@ export default (S) =>
         ),
       ...S.documentTypeListItems().filter(
         (listItem) =>
-          !["settings", "venueSubmission", "blockedSender"].includes(
-            listItem.getId()
-          )
+          ![
+            "settings",
+            "venueSubmission",
+            "blockedSender",
+            "post",
+            "category",
+            "author",
+            "journalSettings",
+          ].includes(listItem.getId())
       ),
+      S.divider(),
+      ...S.documentTypeListItems().filter((listItem) =>
+        ["post", "category", "author"].includes(listItem.getId())
+      ),
+      S.listItem()
+        .title("Journal Settings")
+        .child(
+          S.editor()
+            .id("journalSettings")
+            .schemaType("journalSettings")
+            .documentId("journalSettings")
+        ),
       S.divider(),
       S.listItem()
         .title("Archived Submissions")
