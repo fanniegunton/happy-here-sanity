@@ -90,10 +90,28 @@ This produces a directory like `production-export-<timestamp>/` containing:
 
 The `exports/` directory is gitignored. Re-export whenever you need fresh data.
 
+## Deploying the public site
+
+The **Dashboard** tab has a **Deploy Site** card (`DeployButton` in `plugins/happyHereDashboard/DashboardWidget.jsx`, sitting beside Monthly Check) that POSTs to a Netlify build hook to rebuild the public site. Use it after publishing data changes so they go live immediately rather than waiting for the next scheduled build.
+
+The hook returns 200 with an empty body, so the card can only confirm the build was *queued*, not that it succeeded — the "Deploy log" link goes to Netlify for the actual outcome.
+
+The Netlify site is `happyhere` (https://hh.takeouttracker.com). The widget needs a build hook ID, which is a secret — anyone holding it can trigger builds — so it is **not** committed:
+
+```sh
+SANITY_STUDIO_NETLIFY_BUILD_HOOK_ID=<id>
+```
+
+It lives in the gitignored `.env.local` for local dev. Because `SANITY_STUDIO_*` vars are inlined at build time, the same variable must also be set wherever the Studio is built for deploy, or the Deploy button will render but do nothing. The hook is managed in Netlify under Site settings → Build & deploy → Build hooks.
+
 ## Content model
 
 Documentation lives in `docs/content-model/`:
 
 - [Hours formatting](docs/content-model/hours-formatting.md) — format spec for `happyHourTimes` and `hours` fields
+
+## Sanity MCP
+
+When asked to search, edit, or create establishments via the Sanity MCP tools, read [docs/sanity-mcp-establishments.md](docs/sanity-mcp-establishments.md) first — it covers project coordinates, field reference, GROQ recipes, and the draft-only write workflow.
 
 When writing or modifying `happyHourTimes` or `hours` values, always read the hours formatting doc first.

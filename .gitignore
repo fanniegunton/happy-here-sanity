@@ -16,6 +16,7 @@ node_modules
 
 # Local env vars
 .env.local
+.env.local.bak
 
 *.tsbuildinfo
 /exports/
