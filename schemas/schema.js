@@ -8,10 +8,12 @@
 import blockContent from "./blockContent";
 import category from "./category";
 import post from "./post";
+import author from "./author";
 import establishment from "./establishment";
 import venueSubmission from "./venueSubmission";
 import blockedSender from "./blockedSender";
 import settings from "./settings";
+import journalSettings from "./journalSettings";
 import dayAndTime from "./objects/dayAndTime";
 import neighborhood from "./objects/neighborhood";
 import placeholderImages from "./placeholderImages";
@@ -22,10 +24,12 @@ export default [
   // in the studio.
   post,
   category,
+  author,
   establishment,
   venueSubmission,
   blockedSender,
   settings,
+  journalSettings,
   placeholderImages,
   // When added to this list, object types can be used as
   // { type: 'typename' } in other document schemas
