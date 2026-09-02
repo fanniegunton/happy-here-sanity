@@ -165,6 +165,12 @@ export default {
               },
             },
             {
+              title: "Deal Name",
+              name: "dealName",
+              type: "string",
+              description: "Optional name for this deal, e.g. \"Taco Tuesday\".",
+            },
+            {
               title: "Times",
               name: "times",
               type: "array",
@@ -183,9 +189,10 @@ export default {
           preview: {
             select: {
               dealType: "dealType",
+              dealName: "dealName",
               times: "times",
             },
-            prepare({ dealType, times }) {
+            prepare({ dealType, dealName, times }) {
               const DEAL_TYPE_LABELS = {
                 "daily-special": "Daily Special",
                 "industry-night": "Industry Night",
@@ -193,8 +200,9 @@ export default {
                 brunch: "Brunch",
                 "reverse-hh": "Reverse Happy Hour",
               };
+              const typeLabel = DEAL_TYPE_LABELS[dealType] || "Untitled Deal";
               return {
-                title: DEAL_TYPE_LABELS[dealType] || "Untitled Deal",
+                title: dealName ? `${typeLabel}: ${dealName}` : typeLabel,
                 subtitle: (times || []).join(", "),
               };
             },
