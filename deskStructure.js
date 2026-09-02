@@ -4,6 +4,12 @@ export default (S) =>
     .title("Content")
     .items([
       S.listItem()
+        .title("Neighborhoods")
+        .schemaType("neighborhoodProfile")
+        .child(
+          S.documentTypeList("neighborhoodProfile").title("Neighborhoods")
+        ),
+      S.listItem()
         .title("Settings")
         .child(
           S.editor()
@@ -21,11 +27,12 @@ export default (S) =>
             "category",
             "author",
             "journalSettings",
+            "list",
           ].includes(listItem.getId())
       ),
       S.divider(),
       ...S.documentTypeListItems().filter((listItem) =>
-        ["post", "category", "author"].includes(listItem.getId())
+        ["post", "category", "author", "list"].includes(listItem.getId())
       ),
       S.listItem()
         .title("Journal Settings")

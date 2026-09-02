@@ -12,7 +12,7 @@ const listCloud = {
     {
       title: "Description",
       name: "description",
-      type: "markdown",
+      type: "text",
     },
     {
       title: "Lists",

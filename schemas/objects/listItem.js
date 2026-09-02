@@ -4,14 +4,14 @@ const listItem = {
   type: "object",
   fields: [
     {
-      title: "Restaurant",
-      name: "restaurant",
+      title: "Establishment",
+      name: "establishment",
       type: "reference",
-      to: [{ type: "restaurant" }],
+      to: [{ type: "establishment" }],
       options: {
         filter: ({ document }) => {
-          const ids = (document.restaurants || [])
-            .map(r => (r.restaurant ? r.restaurant._ref : r._ref))
+          const ids = (document.establishments || [])
+            .map(e => (e.establishment ? e.establishment._ref : e._ref))
             .filter(x => x && x.length)
 
           return ids.length
@@ -27,12 +27,12 @@ const listItem = {
     {
       title: "Copy",
       name: "copy",
-      type: "markdown",
+      type: "text",
     },
   ],
   preview: {
     select: {
-      title: "restaurant.title",
+      title: "establishment.name",
       subtitle: "copy",
     },
   },

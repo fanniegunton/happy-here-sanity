@@ -14,8 +14,11 @@ import venueSubmission from "./venueSubmission";
 import blockedSender from "./blockedSender";
 import settings from "./settings";
 import journalSettings from "./journalSettings";
+import list from "./list";
 import dayAndTime from "./objects/dayAndTime";
 import neighborhood from "./objects/neighborhood";
+import listCloud from "./objects/listCloud";
+import listItem from "./objects/listItem";
 import placeholderImages from "./placeholderImages";
 
 // Then we give our schema to the builder and provide the result to Sanity
@@ -30,10 +33,13 @@ export default [
   blockedSender,
   settings,
   journalSettings,
+  list,
   placeholderImages,
   // When added to this list, object types can be used as
   // { type: 'typename' } in other document schemas
   blockContent,
   dayAndTime,
   neighborhood,
+  listCloud,
+  listItem,
 ];

@@ -14,7 +14,7 @@ const hero = {
     {
       title: "Description",
       name: "description",
-      type: "markdown",
+      type: "text",
       validation: Rule => Rule.required(),
     },
     createImageField({
