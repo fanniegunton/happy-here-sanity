@@ -27,6 +27,7 @@ export default (S) =>
             "category",
             "author",
             "journalSettings",
+            "neighborhoodProfile",
             "list",
           ].includes(listItem.getId())
       ),

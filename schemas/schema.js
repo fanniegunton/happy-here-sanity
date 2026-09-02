@@ -14,6 +14,7 @@ import venueSubmission from "./venueSubmission";
 import blockedSender from "./blockedSender";
 import settings from "./settings";
 import journalSettings from "./journalSettings";
+import neighborhoodProfile from "./neighborhoodProfile";
 import list from "./list";
 import dayAndTime from "./objects/dayAndTime";
 import neighborhood from "./objects/neighborhood";
@@ -33,6 +34,7 @@ export default [
   blockedSender,
   settings,
   journalSettings,
+  neighborhoodProfile,
   list,
   placeholderImages,
   // When added to this list, object types can be used as
