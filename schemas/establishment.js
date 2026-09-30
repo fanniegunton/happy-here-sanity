@@ -127,6 +127,15 @@ export default {
       fieldset: "happyHour",
     },
     {
+      title: "Does Not Have Happy Hour",
+      name: "doesNotHaveHappyHour",
+      type: "boolean",
+      fieldset: "happyHour",
+      initialValue: false,
+      description:
+        "Check this if the place has been verified to have no happy hour (it may still have Other Deals). Purely a flag for data entry — prevents re-verifying the same place.",
+    },
+    {
       title: "Happy Hour Menu",
       name: "happyHourMenu",
       type: "url",

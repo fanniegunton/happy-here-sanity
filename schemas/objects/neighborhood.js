@@ -1,4 +1,4 @@
-import { NeighborhoodInput } from '../../components/NeighborhoodInput'
+import { NeighborhoodInput } from "../../components/NeighborhoodInput";
 
 export const REGIONS = [
   { title: "Central", value: "central" },
@@ -47,6 +47,7 @@ export const SUB_NEIGHBORHOODS = {
     { title: "Coronado Hills", value: "coronadoHills" },
     { title: "Delwood", value: "delwood" },
     { title: "St. John", value: "stJohn" },
+    { title: "MLK", value: "mlk" },
   ],
   north: [
     { title: "North Loop", value: "northLoop" },
